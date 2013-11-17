@@ -17,20 +17,20 @@
 
 (function ($) {
     $.fn.mfileUpload = function (el) {
-        
+
         var ie = window.FormData;
 
 
         var defaults = {
             preview: true, //false - to disable preview
             dimensions: null, // upload image width & height eg '200,200' -->'width,height'
-            allowExt: null,   //allowed extensions eg 'png,jpg'  --> default all
-            maxSize: null,    // max size of file that can be uploaded  ( in KB) eg 100 
+            allowExt: null, //allowed extensions eg 'png,jpg'  --> default all
+            maxSize: null, // max size of file that can be uploaded  ( in KB) eg 100 
             maxTotalSize: null, // sum of all file sizes (in KB) eg 100
             btnClass: 'up-btn', // specify own class to style upload button
-            onDimension: null,  // callback when dimension check is not validated 
-            onExtension: null,  // callback when extension check is not validated 
-            onMaxsize: null,    // callback when max file size check is not validated 
+            onDimension: null, // callback when dimension check is not validated 
+            onExtension: null, // callback when extension check is not validated 
+            onMaxsize: null, // callback when max file size check is not validated 
             onMaxtotalsize: null // callback total size of all file check is not validated 
         },
 
@@ -57,37 +57,44 @@
 
 
         if (ie === undefined) {
+
             $(this).find('.preview').hide();
             $(this).find(':file').change(function () {
                 var name = $(this).val();
                 name = name.split('\\').pop();
-                $(this).parent().find('.f-inputinfo').html(name);
-                if (name !== '')
-                    $(this).parent().find('.r-upload').css('display', 'inline-block');
+
+                if (opts.allowExt)
+                    checkext = checkExt(opts.allowExt, name.split('.').pop().toLowerCase());
+
+
+                if (checkext) {
+                    $(this).parent().find('.f-inputinfo').html(name);
+                    if (name !== '')
+                        $(this).parent().find('.r-upload').css('display', 'inline-block');
+                } else
+                    $(this).find(':file').replaceWith($(this) = $(this).clone(true));
+
+
             });
 
-        } 
-        else 
-        {
+        } else {
             $(this).on('change', ':file', function () {
                 var file = this.files,
                     $this = $(this),
                     checkmax = true,
                     checkext = true,
-                	ext = $(this).val().split('.').pop().toLowerCase();
+                    ext = $this.val().split('.').pop().toLowerCase();
 
 
                 if (opts.maxTotalSize)
                     checkmax = checkMaxtotal();
 
                 if (opts.allowExt && checkmax)
-                    checkext=checkExt(opts.allowExt,ext);
+                    checkext = checkExt(opts.allowExt, ext);
 
                 if (file && file[0] && checkmax && checkext) {
                     readFile(file[0], $this);
-                }
-
-                else
+                } else
                     $this.replaceWith($this = $this.clone(true));
 
 
@@ -103,7 +110,7 @@
                 image.src = e.target.result;
                 image.onload = function () {
                     var width = this.width,
-                        height = this.height,                       
+                        height = this.height,
                         name = file.name,
                         size = file.size,
                         src = this.src;
@@ -120,16 +127,16 @@
         });
 
 
-        function collectInfo(w, h,n, s, src, sel) {
-            var cdime = true,                
+        function collectInfo(w, h, n, s, src, sel) {
+            var cdime = true,
                 cmsize = true;
 
-            if (opts.maxSize)              
+            if (opts.maxSize)
                 cmsize = checkSize(opts.maxSize, s);
 
             if (opts.dimensions && cmsize)
-                  cdime = checkDime(opts.dimensions, w, h);                 
-            
+                cdime = checkDime(opts.dimensions, w, h);
+
             if (cdime && cmsize) {
                 sel.parent().find('.f-inputinfo').html(n);
                 sel.parent().find('.r-upload').css('display', 'inline-block');
@@ -147,7 +154,7 @@
 
         function checkDime(dime, w, h) {
             var d = dime.split(',');
-           
+
             if (w > d[0] || h > d[1]) {
                 opts.onDimension();
                 return false;
