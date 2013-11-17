@@ -3,6 +3,10 @@ Mfileupload
 
 Mfileupload - Jquery Plugin For Upload Preview &amp; File Validations
 
+Demo : http://demo.pixelsurgelabs.com/mfileupload
+
+
+
 
 Initialize
 ==========
@@ -44,3 +48,9 @@ Settings
        **onMaxsize**      : callback function when file size condition are not met
        
        **onMaxtotalsize** : callback total size when dimension condition are not met
+
+Update
+======
+
+**Validation works in browsers that support file API . In Non supporting browsers only Extension validation works**
+
